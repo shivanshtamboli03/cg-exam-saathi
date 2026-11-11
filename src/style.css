@@ -683,3 +683,42 @@ body::after {
     transition-duration: .01ms !important;
   }
 }
+
+/* Practice Question Filters */
+.practice-filters {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 12px;
+  margin: 20px 0;
+}
+
+.practice-filters select,
+.practice-filters input {
+  width: 100%;
+  min-width: 0;
+  padding: 13px 14px;
+  border: 1px solid rgba(148, 163, 184, 0.2);
+  border-radius: 12px;
+  background: rgba(15, 23, 42, 0.85);
+  color: #e2e8f0;
+  font: inherit;
+  outline: none;
+}
+
+.practice-filters select:focus,
+.practice-filters input:focus {
+  border-color: #818cf8;
+  box-shadow: 0 0 0 3px rgba(129, 140, 248, 0.12);
+}
+
+.practice-filters span {
+  grid-column: 1 / -1;
+  color: #94a3b8;
+  font-size: 13px;
+}
+
+@media (max-width: 650px) {
+  .practice-filters {
+    grid-template-columns: 1fr;
+  }
+}
