@@ -1,0 +1,45 @@
+
+{
+  "version": 1,
+  "exams": [
+    {
+      "id": "cg-vyapam",
+      "name": "CG Vyapam",
+      "shortName": "Vyapam",
+      "state": "Chhattisgarh",
+      "language": "hi",
+      "enabled": true,
+      "subjects": [
+        {
+          "id": "computer",
+          "name": "Computer",
+          "enabled": true
+        },
+        {
+          "id": "general-knowledge",
+          "name": "General Knowledge",
+          "enabled": true
+        },
+        {
+          "id": "reasoning",
+          "name": "Reasoning",
+          "enabled": true
+        },
+        {
+          "id": "mathematics",
+          "name": "Mathematics",
+          "enabled": true
+        }
+      ]
+    },
+    {
+      "id": "cg-psc",
+      "name": "CGPSC",
+      "shortName": "CGPSC",
+      "state": "Chhattisgarh",
+      "language": "hi",
+      "enabled": false,
+      "subjects": []
+    }
+  ]
+}

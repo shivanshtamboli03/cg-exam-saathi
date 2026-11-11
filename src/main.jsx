@@ -2,14 +2,17 @@
 import React, { useState, useEffect } from "react";
 import { createRoot } from "react-dom/client";
 import "./style.css";
-import questions from "./data/questions.json";
+import { questionService } from "./features/questions/questionService";
+import { localStorageService } from "./services/storage/localStorageService";
 
 function App() {
+  const questions = questionService.getAll();
+
   const [page, setPage] = useState("Dashboard");
   const [idx, setIdx] = useState(0);
   const [choice, setChoice] = useState(null);
   const [checked, setChecked] = useState(false);
-  const [done, setDone] = useState({});
+  const [done, setDone] = useState(() => localStorageService.get("practice-progress", {}));
 
   // Demo Test States
   const [testStarted, setTestStarted] = useState(false);
@@ -83,7 +86,11 @@ function App() {
   function check() {
     if (choice === null) return;
     setChecked(true);
-    setDone(d => ({ ...d, [q.id]: choice === q.answer }));
+    setDone(d => {
+      const updated = { ...d, [q.id]: choice === q.answer };
+      localStorageService.set("practice-progress", updated);
+      return updated;
+    });
   }
 
   return (
