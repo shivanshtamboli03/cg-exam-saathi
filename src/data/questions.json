@@ -1,0 +1,331 @@
+[
+  {
+    "id": 1,
+    "question": "इंटरनेट द्वारा उपयोग किया जाने वाला संचार प्रोटोकॉल है?",
+    "options": ["WWW", "HTTP", "TCP/IP", "FTP"],
+    "answer": 2,
+    "explanation": "TCP/IP इंटरनेट का मुख्य संचार प्रोटोकॉल है।"
+  },
+  {
+    "id": 2,
+    "question": "निम्नलिखित में से कौन-सी वेबसाइट आपको स्थानीय दुकानों का विवरण देगी?",
+    "options": ["www.google.com", "www.justdial.com", "www.localshops.com", "www.yahoo.co.in"],
+    "answer": 2,
+    "explanation": "www.localshops.com स्थानीय दुकानों की जानकारी प्रदान करने वाली वेबसाइट है।"
+  },
+  {
+    "id": 3,
+    "question": "एक तकनीक जिसमें एक प्रोग्राम IP प्रसारण ऐड्रेसिंग ऑपरेशन का दुरुपयोग करके एक नेटवर्क पर हमला करता है, कहलाता है?",
+    "options": ["स्मर्किंग", "सर्विस की अस्वीकृति", "स्निफिंग", "स्पूफिंग"],
+    "answer": 0,
+    "explanation": "स्मर्किंग (Smurfing) IP ब्रॉडकास्ट का दुरुपयोग कर किया जाने वाला नेटवर्क हमला है।"
+  },
+  {
+    "id": 4,
+    "question": "एक कम्प्यूटर वायरस जो आमतौर पर खुद ही अन्य कम्प्यूटर प्रोग्राम पर हमला करता है, कहलाता है?",
+    "options": ["टारगेट प्रोग्राम", "ट्रोजन हॉर्स", "होस्ट प्रोग्राम", "बैकडोर प्रोग्राम"],
+    "answer": 1,
+    "explanation": "ट्रोजन हॉर्स एक हानिकारक प्रोग्राम है जो अन्य प्रोग्रामों को प्रभावित करता है।"
+  },
+  {
+    "id": 5,
+    "question": "VGA का पूर्ण रूप क्या है?",
+    "options": ["Visual Graphics Application", "Video Graphics Application", "Video Graphics Array", "Visual Graphics Array"],
+    "answer": 2,
+    "explanation": "VGA का पूर्ण रूप Video Graphics Array है।"
+  },
+  {
+    "id": 6,
+    "question": "निम्नलिखित में कौन-सा एक इमेज फाइल फॉरमैट नहीं है?",
+    "options": [".img", ".png", ".tif", ".jpg"],
+    "answer": 0,
+    "explanation": ".img सामान्य इमेज फॉर्मेट नहीं है।"
+  },
+  {
+    "id": 7,
+    "question": "1 TB बराबर होता है?",
+    "options": ["10³ GB", "10⁶ MB", "10⁹ KB", "उपर्युक्त सभी"],
+    "answer": 3,
+    "explanation": "1 TB को GB, MB तथा KB में व्यक्त किया जा सकता है, इसलिए उपर्युक्त सभी सही हैं।"
+  },
+  {
+    "id": 8,
+    "question": "डिस्क संरचना के बारे में क्या सही है?",
+    "options": ["ट्रैक > सिलिंडर > सेक्टर", "सिलिंडर > सेक्टर > ट्रैक", "ट्रैक > सेक्टर > सिलिंडर", "सिलिंडर > ट्रैक > सेक्टर"],
+    "answer": 3,
+    "explanation": "डिस्क संरचना में सिलिंडर, ट्रैक और सेक्टर का क्रम माना जाता है।"
+  },
+  {
+    "id": 9,
+    "question": "निम्नलिखित में से कौन-सा एक गूगल का प्रोडक्ट नहीं है?",
+    "options": ["Android", "iOS", "Chrome", "Gmail"],
+    "answer": 1,
+    "explanation": "iOS एप्पल का ऑपरेटिंग सिस्टम है।"
+  },
+  {
+    "id": 10,
+    "question": "यूट्यूब के गुणों के बारे में क्या गलत है?",
+    "options": ["विडियो अपलोडिंग", "विडियो एनालिसिस", "विडियो डाउनलोडिंग", "विडियो सर्चिंग"],
+    "answer": 1,
+    "explanation": "विडियो एनालिसिस यूट्यूब का सामान्य उपयोगकर्ता फीचर नहीं माना जाता।"
+  },
+  {
+    "id": 11,
+    "question": "रोबोटिक का ज्यादा इस्तेमाल किस क्षेत्र में होता है?",
+    "options": ["कुकिंग", "मैन्युफैक्चरिंग", "टीचिंग", "फार्मिंग"],
+    "answer": 1,
+    "explanation": "रोबोटिक्स का सबसे अधिक उपयोग मैन्युफैक्चरिंग क्षेत्र में किया जाता है।"
+  },
+  {
+    "id": 12,
+    "question": "स्टोर में हर बेचने वाले उत्पाद पर छपे हुए यूनिवर्सल प्रोडक्ट कोड को पढ़ने के लिए उपयोग में आने वाला उपकरण क्या कहलाता है?",
+    "options": ["बारकोड रीडर", "लेजर लाइट", "स्पाइ कैम", "प्रिंटर"],
+    "answer": 0,
+    "explanation": "UPC को पढ़ने के लिए बारकोड रीडर का उपयोग किया जाता है।"
+  },
+  {
+    "id": 13,
+    "question": "कम्प्यूटर का कौन-सा भाग प्रोसेसर को बाकी हार्डवेयर से जोड़ता है?",
+    "options": ["मदरबोर्ड", "सीपीयू", "पंच कार्ड", "चिप"],
+    "answer": 0,
+    "explanation": "मदरबोर्ड सभी हार्डवेयर घटकों को आपस में जोड़ता है।"
+  },
+  {
+    "id": 14,
+    "question": "कम्प्यूटर सिस्टम को नियंत्रित करने वाले प्रोग्राम का नाम क्या है?",
+    "options": ["हार्डवेयर", "कीबोर्ड", "सॉफ्टवेयर", "माउस"],
+    "answer": 2,
+    "explanation": "सॉफ्टवेयर कम्प्यूटर सिस्टम को नियंत्रित करता है।"
+  },
+  {
+    "id": 15,
+    "question": "इंकजेट प्रिंटर एक इमेज को कैसे प्रिंट करता है?",
+    "options": ["एक कैरेक्टर बनाने के लिए एक समय में एक डॉट से", "कैरेक्टर की स्प्रे-प्रिंटिंग से", "इंक्ड रिबन पर स्ट्राइक करके", "कागज पर स्याही गिराने से"],
+    "answer": 1,
+    "explanation": "इंकजेट प्रिंटर स्याही को स्प्रे करके प्रिंट करता है।"
+  },
+  {
+    "id": 16,
+    "question": "डॉट मैट्रिक्स प्रिंटर का दूसरा नाम क्या है?",
+    "options": ["इम्पैक्ट प्रिंटर", "पेज प्रिंटर", "स्प्रे प्रिंटर", "लाइन प्रिंटर"],
+    "answer": 0,
+    "explanation": "डॉट मैट्रिक्स एक इम्पैक्ट प्रिंटर है।"
+  },
+  {
+    "id": 17,
+    "question": "निम्न में से कौन-सा एक ऑपरेटिंग सिस्टम नहीं है?",
+    "options": ["विंडोज", "लिनक्स", "डॉस", "ओरेकल"],
+    "answer": 3,
+    "explanation": "ओरेकल एक डेटाबेस कंपनी/सॉफ्टवेयर है, ऑपरेटिंग सिस्टम नहीं।"
+  },
+  {
+    "id": 18,
+    "question": "निम्न में से कौन-सा सिंगल-यूज़र ऑपरेटिंग सिस्टम है?",
+    "options": ["एमएस-डॉस", "यूनिक्स", "जैनिक्स", "(A) और (C) दोनों"],
+    "answer": 0,
+    "explanation": "एमएस-डॉस एक सिंगल-यूज़र ऑपरेटिंग सिस्टम है।"
+  },
+  {
+    "id": 19,
+    "question": "एमएस ऑफिस सॉफ्टवेयर ग्रुप के साथ कौन-सा स्प्रेडशीट एप्लीकेशन आता है?",
+    "options": ["एमएस-वर्ड", "एमएस-एक्सेल", "एमएस-पावरपॉइंट", "एमएस-एक्सेस"],
+    "answer": 1,
+    "explanation": "एमएस-एक्सेल एक स्प्रेडशीट एप्लीकेशन है।"
+  },
+  {
+    "id": 20,
+    "question": "साधारणतः फूटर कहाँ पर प्रिंट होता है?",
+    "options": ["पहले पृष्ठ पर", "अंतिम पृष्ठ पर", "सभी पृष्ठों पर", "सम पृष्ठों पर"],
+    "answer": 2,
+    "explanation": "फूटर सामान्यतः सभी पृष्ठों पर प्रिंट होता है।"
+  },
+  {
+    "id": 21,
+    "question": "निम्नलिखित काव्य-पंक्तियों में से भ्रांतिमान अलंकार का उदाहरण है?",
+    "options": [
+      "कहहिं सप्रेम एक-एक पाहीं। राम-लखन सखि होहिं की नाहीं।।",
+      "नारी बीच सारी है, कि सारी बीच नारी है!",
+      "यह काया है या शेष उसी की छाया।",
+      "पायं महावर दैन कौं नाइनि बैठी आई।"
+    ],
+    "answer": 3,
+    "explanation": "दिए गए विकल्पों में चौथा उदाहरण भ्रांतिमान अलंकार का है।"
+  },
+  {
+    "id": 22,
+    "question": "दोहा छंद के प्रत्येक चरण में कितनी मात्राएँ होती हैं?",
+    "options": [
+      "क्रमशः 13,11,13,11",
+      "क्रमशः 13,13,11,11",
+      "क्रमशः 11,13,11,13",
+      "क्रमशः 11,11,13,13"
+    ],
+    "answer": 0,
+    "explanation": "दोहा के चार चरणों में क्रमशः 13,11,13,11 मात्राएँ होती हैं।"
+  },
+  {
+    "id": 23,
+    "question": "निम्नलिखित में से कौन-सा शब्द 'अ' उपसर्गयुक्त है?",
+    "options": ["अचेत", "अथाह", "अबेर", "उपर्युक्त सभी"],
+    "answer": 3,
+    "explanation": "सभी शब्द 'अ' उपसर्ग से बने हैं।"
+  },
+  {
+    "id": 24,
+    "question": "निम्नलिखित शब्दों में से कौन-सा तद्भव शब्द है?",
+    "options": ["वंश", "बाग", "पंख", "टीस"],
+    "answer": 2,
+    "explanation": "पंख तद्भव शब्द है।"
+  },
+  {
+    "id": 25,
+    "question": "प्रथम शब्द के अनेकार्थी शब्दों का सही विकल्प कौन-सा है?",
+    "options": [
+      "काम–प्रयोजन, गेहूँ, इच्छा",
+      "नाग–पर्वत, पेड़, साँप",
+      "द्विज–चन्द्रमा, स्थिर, दाँत",
+      "वर्ण–रंग, प्रिय, अक्षर"
+    ],
+    "answer": 1,
+    "explanation": "नाग के अनेकार्थी रूप में पर्वत, पेड़ और साँप आते हैं।"
+  },
+  {
+    "id": 26,
+    "question": "'कंज' शब्द का पर्यायवाची नहीं है?",
+    "options": ["अमृत", "ब्रह्मा", "कमल", "मदिरा"],
+    "answer": 3,
+    "explanation": "मदिरा, कंज का पर्यायवाची नहीं है।"
+  },
+  {
+    "id": 27,
+    "question": "बाह्य प्रयत्न के आधार पर वर्गों के मुख्यतः कितने भेद हैं?",
+    "options": ["दो", "तीन", "चार", "उपर्युक्त में से कोई नहीं"],
+    "answer": 0,
+    "explanation": "बाह्य प्रयत्न के आधार पर दो मुख्य भेद होते हैं।"
+  },
+  {
+    "id": 28,
+    "question": "“शास्त्रों की बात में कविता का दखल समझना, यह भी धर्म के विरुद्ध है।” इस वाक्य में 'यह' किस प्रकार का सर्वनाम है?",
+    "options": ["निजवाचक सर्वनाम", "निश्चयवाचक सर्वनाम", "संबंधवाचक सर्वनाम", "अनिश्चयवाचक सर्वनाम"],
+    "answer": 0,
+    "explanation": "प्रश्नानुसार उत्तर निजवाचक सर्वनाम दिया गया है।"
+  },
+  {
+    "id": 29,
+    "question": "निम्नलिखित में से कौन-सा वाक्य शुद्ध है?",
+    "options": [
+      "इतने में क्या देखते हैं कि सामने नंगी तलवार लिए वह खड़ा है।",
+      "वह अनेक वर्षों से वहाँ पढ़ता था, पढ़ाता था।",
+      "तुम्हारे पिताजी को आने दो तो तुम्हें मैं मजा चखाता हूँ।",
+      "उपर्युक्त सभी सही हैं।"
+    ],
+    "answer": 3,
+    "explanation": "सभी वाक्य शुद्ध माने गए हैं।"
+  },
+  {
+    "id": 30,
+    "question": "'यण संधि' शब्द का उदाहरण कौन-सा है?",
+    "options": [
+      "महा + औदार्य = महौदार्य",
+      "महा + उत्सव = महोत्सव",
+      "मनु + अंतर = मन्वंतर",
+      "वधू + उत्सव = वधूत्सव"
+    ],
+    "answer": 2,
+    "explanation": "मनु + अंतर = मन्वंतर, यण संधि का उदाहरण है।"
+  },
+  {
+    "id": 31,
+    "question": "Select the correct passive form of the given sentence: You cannot pump the ocean dry.",
+    "options": [
+      "Pump the ocean dry",
+      "The ocean is dry",
+      "Cannot the ocean dry",
+      "The ocean cannot be pumped dry"
+    ],
+    "answer": 3,
+    "explanation": "The correct passive form is 'The ocean cannot be pumped dry'."
+  },
+  {
+    "id": 32,
+    "question": "Choose the correct narration: Rishi told him, 'Your bag is new.'",
+    "options": [
+      "Rishi told that my bag was new.",
+      "Rishi told him that his bag was new.",
+      "Rishi told bag was new.",
+      "Rishi told bag is new."
+    ],
+    "answer": 1,
+    "explanation": "The correct indirect speech is 'Rishi told him that his bag was new.'"
+  },
+  {
+    "id": 33,
+    "question": "Which is the correct spelling for the word meaning 'a friendly relationship'?",
+    "options": ["Rappore", "Repore", "Rapport", "Reppore"],
+    "answer": 2,
+    "explanation": "Rapport means a friendly relationship."
+  },
+  {
+    "id": 34,
+    "question": "Select the correct antonym for the word 'besmirch'.",
+    "options": ["Honour", "Condemn", "Criticise", "Appreciate"],
+    "answer": 0,
+    "explanation": "Honour is the antonym of besmirch."
+  },
+  {
+    "id": 35,
+    "question": "Select the correct synonym for the word 'wretched'.",
+    "options": ["Shattered", "Clumsy", "Tired", "Miserable"],
+    "answer": 3,
+    "explanation": "Miserable is the correct synonym of wretched."
+  },
+  {
+    "id": 36,
+    "question": "One word substitution for 'A great lover of books'.",
+    "options": ["Biography", "Bibliography", "Bibliophile", "Biblical"],
+    "answer": 2,
+    "explanation": "A Bibliophile is a person who loves books."
+  },
+  {
+    "id": 37,
+    "question": "Choose the correct feminine gender of the word 'stag'.",
+    "options": ["Vixen", "Hind", "Filly", "Goose"],
+    "answer": 1,
+    "explanation": "Hind is the feminine gender of stag."
+  },
+  {
+    "id": 38,
+    "question": "Fill in the blank with the correct pronoun: Rama and ______ were present in the class.",
+    "options": ["me", "them", "I", "her"],
+    "answer": 2,
+    "explanation": "The correct pronoun is 'I'."
+  },
+  {
+    "id": 39,
+    "question": "Choose the correct conjunction and fill in the blank: ______ you try, you will not succeed.",
+    "options": ["Unless", "If", "As", "But"],
+    "answer": 0,
+    "explanation": "Unless is the correct conjunction."
+  },
+  {
+    "id": 40,
+    "question": "Fill in the blank with the correct preposition: He leaned ______ the wall.",
+    "options": ["above", "to", "against", "in"],
+    "answer": 2,
+    "explanation": "The correct preposition is 'against'."
+  },
+  {
+    "id": 41,
+    "question": "कोई धन साधारण ब्याज की दर से 10 वर्षों में दोगुना हो जाता है, तो कितने वर्षों में यह चार गुना हो जाएगा?",
+    "options": ["20", "30", "40", "उपर्युक्त में से कोई नहीं"],
+    "answer": 1,
+    "explanation": "साधारण ब्याज में धन 10 वर्षों में दोगुना होता है, इसलिए चार गुना होने में 30 वर्ष लगेंगे।"
+  },
+  {
+    "id": 42,
+    "question": "किसी निश्चित चक्रवृद्धि ब्याज की दर से ₹500 की धनराशि 6 वर्षों में दुगुनी हो जाती है, तो 24 वर्ष बाद यह कितनी हो जाएगी?",
+    "options": ["₹8000", "₹6000", "₹2000", "₹5000"],
+    "answer": 0,
+    "explanation": "24 वर्ष = 4 बार 6 वर्ष, अतः राशि 500 × 2⁴ = ₹8000 होगी।"
+  }
+]

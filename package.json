@@ -1,0 +1,9 @@
+{
+  "name":"cg-exam-saathi-prototype",
+  "version":"1.0.0",
+  "private":true,
+  "type":"module",
+  "scripts":{"dev":"vite","build":"vite"},
+  "dependencies":{"@vitejs/plugin-react":"latest","vite":"latest","react":"latest","react-dom":"latest"},
+  "devDependencies":{}
+}
