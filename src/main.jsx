@@ -1,314 +1,480 @@
 
-import React, { useState, useEffect } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import { createRoot } from "react-dom/client";
 import "./style.css";
+
 import { questionService } from "./features/questions/questionService";
 import { localStorageService } from "./services/storage/localStorageService";
 
+const ALL_QUESTIONS = questionService.getAll();
+
+const readStore = (key, fallback) =>
+  localStorageService.get(key, fallback);
+
 function App() {
-  const questions = questionService.getAll();
-
   const [page, setPage] = useState("Dashboard");
-  const [idx, setIdx] = useState(0);
-  const [choice, setChoice] = useState(null);
+  const [practiceIndex, setPracticeIndex] = useState(0);
+  const [selected, setSelected] = useState(null);
   const [checked, setChecked] = useState(false);
-  const [done, setDone] = useState(() => localStorageService.get("practice-progress", {}));
 
-  // Demo Test States
+  const [progress, setProgress] = useState(() =>
+    readStore("practice-progress", {})
+  );
+
+  const [testAnswers, setTestAnswers] = useState({});
+  const [testIndex, setTestIndex] = useState(0);
   const [testStarted, setTestStarted] = useState(false);
   const [testSubmitted, setTestSubmitted] = useState(false);
-  const [testAnswers, setTestAnswers] = useState({});
-  const [remaining, setRemaining] = useState(3600);
+  const [testTime, setTestTime] = useState(3600);
+  const [testHistory, setTestHistory] = useState(() =>
+    readStore("test-history", [])
+  );
 
-  const q = questions[idx];
-  const score = Object.values(done).filter(Boolean).length;
+  const [studyPlan, setStudyPlan] = useState(() =>
+    readStore("study-plan", [
+      { id: 1, text: "Computer Knowledge", done: false },
+      { id: 2, text: "Chhattisgarh GK", done: false },
+      { id: 3, text: "Reasoning Practice", done: false },
+      { id: 4, text: "Mock Test", done: false }
+    ])
+  );
 
-  // Timer
+  const [mobileMenu, setMobileMenu] = useState(false);
+
+  const questions = useMemo(
+    () => ALL_QUESTIONS.filter(q => q.exam === "cg-vyapam"),
+    []
+  );
+
+  const q = questions[practiceIndex % Math.max(questions.length, 1)];
+
+  const attempted = Object.keys(progress).length;
+  const correct = Object.values(progress).filter(Boolean).length;
+  const accuracy = attempted
+    ? Math.round((correct / attempted) * 100)
+    : 0;
+
   useEffect(() => {
-    if (page !== "Test" || !testStarted || testSubmitted) return;
+    localStorageService.set("practice-progress", progress);
+  }, [progress]);
+
+  useEffect(() => {
+    localStorageService.set("study-plan", studyPlan);
+  }, [studyPlan]);
+
+  useEffect(() => {
+    localStorageService.set("test-history", testHistory);
+  }, [testHistory]);
+
+  useEffect(() => {
+    if (!testStarted || testSubmitted || testTime <= 0) return;
 
     const timer = setInterval(() => {
-      setRemaining(prev => {
-        if (prev <= 1) {
-          setTestSubmitted(true);
-          return 0;
-        }
-        return prev - 1;
-      });
+      setTestTime(t => Math.max(0, t - 1));
     }, 1000);
 
     return () => clearInterval(timer);
-  }, [page, testStarted, testSubmitted]);
+  }, [testStarted, testSubmitted, testTime]);
 
-  const time = 
-    String(Math.floor(remaining / 60)).padStart(2, "0") +
-    ":" +
-    String(remaining % 60).padStart(2, "0");
+  useEffect(() => {
+    if (testStarted && testTime === 0 && !testSubmitted) {
+      submitTest();
+    }
+  }, [testTime, testStarted, testSubmitted]);
 
-  const testScore = questions.filter(
-    question => testAnswers[question.id] === question.answer
-  ).length;
+  function navigate(name) {
+    setPage(name);
+    setMobileMenu(false);
+    setSelected(null);
+    setChecked(false);
+  }
 
-  const attempted = Object.keys(testAnswers).length;
+  function checkPractice() {
+    if (selected === null || !q) return;
 
-  const accuracy = attempted
-    ? Math.round((testScore / attempted) * 100)
-    : 0;
+    setChecked(true);
+    setProgress(prev => ({
+      ...prev,
+      [q.id]: Number(selected) === Number(q.answer)
+    }));
+  }
+
+  function nextPractice() {
+    setPracticeIndex(i => (i + 1) % Math.max(questions.length, 1));
+    setSelected(null);
+    setChecked(false);
+  }
 
   function startTest() {
-    setIdx(0);
     setTestAnswers({});
-    setRemaining(3600);
+    setTestIndex(0);
+    setTestTime(3600);
     setTestSubmitted(false);
     setTestStarted(true);
   }
 
   function submitTest() {
+    if (testSubmitted) return;
+
+    const score = questions.reduce((sum, question, index) => {
+      return sum + (
+        Number(testAnswers[index]) === Number(question.answer) ? 1 : 0
+      );
+    }, 0);
+
+    const result = {
+      id: Date.now(),
+      date: new Date().toLocaleDateString("en-IN"),
+      total: questions.length,
+      attempted: Object.keys(testAnswers).length,
+      correct: score,
+      accuracy: questions.length
+        ? Math.round((score / questions.length) * 100)
+        : 0
+    };
+
+    setTestHistory(prev => [result, ...prev]);
     setTestSubmitted(true);
+    setTestStarted(false);
   }
 
-  function next() {
-    if (idx < questions.length - 1) {
-      setIdx(idx + 1);
-      setChoice(null);
-      setChecked(false);
-    }
+  function resetProgress() {
+    if (!window.confirm("क्या आप अपना Practice Progress reset करना चाहते हैं?")) return;
+    setProgress({});
+    localStorageService.remove("practice-progress");
   }
 
-  function previous() {
-    if (idx > 0) {
-      setIdx(idx - 1);
-      setChoice(null);
-      setChecked(false);
-    }
-  }
-
-  function check() {
-    if (choice === null) return;
-    setChecked(true);
-    setDone(d => {
-      const updated = { ...d, [q.id]: choice === q.answer };
-      localStorageService.set("practice-progress", updated);
-      return updated;
-    });
-  }
+  const navItems = [
+    ["Dashboard", "⌂"],
+    ["Practice", "✎"],
+    ["Mock Test", "▣"],
+    ["Revision", "↻"],
+    ["Study Plan", "▤"],
+    ["Progress", "▥"]
+  ];
 
   return (
-    <div className="app">
-      <aside className="sidebar">
+    <div className="app-shell">
+      <aside className={`sidebar ${mobileMenu ? "sidebar-open" : ""}`}>
         <div className="brand">
-          <span className="logo">CG</span>
-          <div>
-            <b>CG Exam Saathi</b>
-            <small>LEARN • PRACTICE • REVISE</small>
-          </div>
+          <div className="brand-icon">📚</div>
+          <h2>CG Exam<br />Saathi</h2>
+          <p>Study • Practice • Success</p>
         </div>
 
         <nav>
-          {["Dashboard", "Practice", "Revision", "Study Plan", "Progress"].map(x =>
+          {navItems.map(([name, icon]) => (
             <button
-              className={page === x ? "active" : ""}
-              onClick={() => setPage(x)}
-              key={x}
+              key={name}
+              className={`nav-item ${page === name ? "active" : ""}`}
+              onClick={() => navigate(name)}
             >
-              {x}
+              <span>{icon}</span>{name}
             </button>
-          )}
+          ))}
         </nav>
 
-        <div className="sidebottom">
-          Prototype v0.3<br />
-          <span>Demo Test Enabled</span>
+        <div className="sidebar-bottom">
+          <span>🏆</span>
+          <strong>Dream Big...</strong>
+          <p>Crack CG Vyapam!</p>
         </div>
       </aside>
 
-      <main>
-        <header>
-          <div>
-            <span className="eyebrow">CHHATTISGARH EXAM PREPARATION</span>
-            <h1>{page}</h1>
-          </div>
-          <span className="tag">PATWARI • DEMO</span>
+      <main className="main-area">
+        <header className="topbar">
+          <button className="mobile-toggle" onClick={() => setMobileMenu(!mobileMenu)}>
+            ☰
+          </button>
+          <div className="exam-pill">🎓 CG Vyapam</div>
+          <div className="top-tag">✨ Your Success Partner</div>
+          <div className="top-spacer" />
+          <span className="top-icon">🔔</span>
+          <div className="avatar">S</div>
         </header>
 
-        {/* DASHBOARD */}
-        {page === "Dashboard" && <>
-          <section className="welcome">
-            <div>
-              <span className="eyebrow">YOUR STUDY SPACE</span>
-              <h2>Small steps. Strong preparation.</h2>
-              <p>Practice Chhattisgarh-focused questions and review your progress.</p>
+        {page === "Dashboard" && (
+          <Dashboard
+            navigate={navigate}
+            questions={questions}
+            attempted={attempted}
+            correct={correct}
+            accuracy={accuracy}
+            testHistory={testHistory}
+          />
+        )}
 
-              <button className="primary" onClick={() => setPage("Practice")}>
-                Start Practice →
-              </button>
+        {page === "Practice" && (
+          <section className="page-content">
+            <PageHeading title="Practice Zone" subtitle="Learn • Practice • Improve" />
+            <div className="practice-layout">
+              <div className="panel question-panel">
+                <div className="question-meta">
+                  <span>Question {practiceIndex + 1}</span>
+                  <span>{q?.subject || "General"} • CG Vyapam</span>
+                </div>
+                <h2>{q?.question || "Question bank में अभी प्रश्न उपलब्ध नहीं हैं।"}</h2>
 
-              <button className="primary" onClick={() => setPage("Test")}>
-                Start Demo Test →
-              </button>
-            </div>
-            <div className="heroicon">📚</div>
-          </section>
+                <div className="options">
+                  {q?.options?.map((option, i) => (
+                    <button
+                      key={i}
+                      className={`option ${selected === i ? "option-selected" : ""} ${
+                        checked && i === q.answer ? "option-correct" : ""
+                      } ${checked && selected === i && i !== q.answer ? "option-wrong" : ""}`}
+                      onClick={() => !checked && setSelected(i)}
+                    >
+                      <span>{String.fromCharCode(65 + i)}</span>
+                      {option}
+                    </button>
+                  ))}
+                </div>
 
-          <div className="stats">
-            <article><small>Total questions</small><strong>{questions.length}</strong></article>
-            <article><small>Attempted practice</small><strong>{Object.keys(done).length}</strong></article>
-            <article><small>Correct practice</small><strong>{score}</strong></article>
-          </div>
+                {checked && (
+                  <div className={`answer-feedback ${selected === q.answer ? "good" : "bad"}`}>
+                    {selected === q.answer ? "✓ सही उत्तर!" : "✕ गलत उत्तर"}
+                    <p>{q?.explanation || "इस प्रश्न की explanation उपलब्ध नहीं है।"}</p>
+                  </div>
+                )}
 
-          <section className="panel">
-            <h3>Quick access</h3>
-            <div className="quick">
-              <button onClick={() => setPage("Practice")}>📝 Practice questions</button>
-              <button onClick={() => setPage("Test")}>🧪 Demo Test</button>
-              <button onClick={() => setPage("Revision")}>🔁 Revision queue</button>
-              <button onClick={() => setPage("Study Plan")}>🗓️ Study plan</button>
-            </div>
-          </section>
-        </>}
+                <div className="question-actions">
+                  <button className="btn-secondary" onClick={nextPractice}>Skip →</button>
+                  {!checked ? (
+                    <button className="btn-primary" onClick={checkPractice}>Check Answer</button>
+                  ) : (
+                    <button className="btn-primary" onClick={nextPractice}>Next Question →</button>
+                  )}
+                </div>
+              </div>
 
-        {/* PRACTICE MODE */}
-        {page === "Practice" && q && <>
-          <section className="panel practice">
-            <span className="tag">QUESTION {idx + 1}/{questions.length}</span>
-            <h2 className="question">{q.question}</h2>
-
-            <div className="options">
-              {q.options.map((o, i) =>
-                <button
-                  key={i}
-                  className={"option " +
-                    (choice === i ? "selected " : "") +
-                    (checked && i === q.answer ? "correct" : "")}
-                  onClick={() => !checked && setChoice(i)}
-                >
-                  {String.fromCharCode(65 + i)}. {o}
-                </button>
-              )}
-            </div>
-
-            {checked && <div className={"feedback " + (choice === q.answer ? "good" : "bad")}>
-              <b>{choice === q.answer ? "Correct!" : "Not quite."}</b>
-              <p>{q.explanation}</p>
-            </div>}
-
-            <div className="row actions">
-              <button onClick={previous} disabled={idx === 0}>← Previous</button>
-
-              {!checked
-                ? <button className="primary" onClick={check}>Check Answer</button>
-                : <button className="primary" onClick={next}>Next Question →</button>
-              }
+              <div className="panel side-info">
+                <h3>📈 Practice Summary</h3>
+                <div className="mini-stat"><span>Attempted</span><strong>{attempted}</strong></div>
+                <div className="mini-stat"><span>Correct</span><strong>{correct}</strong></div>
+                <div className="mini-stat"><span>Accuracy</span><strong>{accuracy}%</strong></div>
+                <div className="progress-track"><div style={{width: `${accuracy}%`}} /></div>
+              </div>
             </div>
           </section>
-        </>}
+        )}
 
-        {page === "Practice" && !q && <section className="panel">
-          No questions available. Check questions.json.
-        </section>}
+        {page === "Mock Test" && (
+          <section className="page-content">
+            <PageHeading title="Mock Test" subtitle="Test your preparation under exam conditions" />
+            {!testStarted && !testSubmitted && (
+              <div className="panel test-start">
+                <div className="big-icon">📝</div>
+                <h2>CG Vyapam Practice Test</h2>
+                <p>{questions.length} questions • 60 minutes • Score analysis</p>
+                <button className="btn-primary" onClick={startTest}>Start Mock Test →</button>
+              </div>
+            )}
 
-        {/* DEMO TEST */}
-        {page === "Test" && !testStarted && <section className="panel">
-          <h2>Patwari Demo Test</h2>
-          <p>Total Questions: {questions.length}</p>
-          <p>Time Limit: 60 Minutes</p>
-          <p>Answers will not be shown during the test.</p>
-          <button className="primary" onClick={startTest}>Begin Test →</button>
-        </section>}
+            {testStarted && !testSubmitted && (
+              <div className="panel question-panel">
+                <div className="question-meta">
+                  <span>Question {testIndex + 1}/{questions.length}</span>
+                  <span className="timer">⏱ {Math.floor(testTime / 60)}:{String(testTime % 60).padStart(2, "0")}</span>
+                </div>
+                <h2>{questions[testIndex]?.question}</h2>
+                <div className="options">
+                  {questions[testIndex]?.options.map((option, i) => (
+                    <button
+                      key={i}
+                      className={`option ${Number(testAnswers[testIndex]) === i ? "option-selected" : ""}`}
+                      onClick={() => setTestAnswers(prev => ({...prev, [testIndex]: i}))}
+                    >
+                      <span>{String.fromCharCode(65 + i)}</span>{option}
+                    </button>
+                  ))}
+                </div>
+                <div className="question-actions">
+                  <button className="btn-secondary" onClick={() => setTestIndex(i => Math.max(0, i - 1))}>← Previous</button>
+                  {testIndex < questions.length - 1 ? (
+                    <button className="btn-primary" onClick={() => setTestIndex(i => i + 1)}>Next →</button>
+                  ) : (
+                    <button className="btn-primary" onClick={submitTest}>Submit Test</button>
+                  )}
+                </div>
+                <button className="text-button" onClick={submitTest}>Finish test now</button>
+              </div>
+            )}
 
-        {page === "Test" && testStarted && !testSubmitted && q && <>
-          <section className="panel practice">
-            <div className="row">
-              <span className="tag">QUESTION {idx + 1}/{questions.length}</span>
-              <span className="tag">⏱ {time}</span>
-            </div>
+            {testSubmitted && (
+              <div className="panel test-start">
+                <div className="big-icon">🏆</div>
+                <h2>Test Completed!</h2>
+                <div className="result-score">
+                  {testHistory[0]?.accuracy ?? 0}%
+                </div>
+                <p>Correct: {testHistory[0]?.correct ?? 0} / {questions.length}</p>
+                <button className="btn-primary" onClick={startTest}>Retake Test</button>
+              </div>
+            )}
+          </section>
+        )}
 
-            <h2 className="question">{q.question}</h2>
-
-            <div className="options">
-              {q.options.map((o, i) =>
-                <button
-                  key={i}
-                  className={"option " +
-                    (testAnswers[q.id] === i ? "selected" : "")}
-                  onClick={() =>
-                    setTestAnswers(a => ({ ...a, [q.id]: i }))
-                  }
-                >
-                  {String.fromCharCode(65 + i)}. {o}
-                </button>
-              )}
-            </div>
-
-            <div className="row actions">
-              <button onClick={previous} disabled={idx === 0}>
-                ← Previous
-              </button>
-
-              <button onClick={next} disabled={idx === questions.length - 1}>
-                Next →
-              </button>
-
-              <button className="primary" onClick={submitTest}>
-                Submit Test
-              </button>
+        {page === "Revision" && (
+          <section className="page-content">
+            <PageHeading title="Revision Room" subtitle="Revise your weak areas and mistakes" />
+            <div className="panel">
+              <h2>📌 Questions to revise</h2>
+              {questions.filter(question => progress[question.id] === false).length === 0
+                ? <EmptyState text="अभी कोई गलत उत्तर नहीं है। Practice शुरू करें!" />
+                : questions.filter(question => progress[question.id] === false).map(question => (
+                  <div className="revision-item" key={question.id}>
+                    <p>{question.question}</p>
+                    <small>Correct answer: {question.options[question.answer]}</small>
+                  </div>
+                ))}
             </div>
           </section>
-        </>}
+        )}
 
-        {/* TEST RESULT */}
-        {page === "Test" && testSubmitted && <section className="panel">
-          <h2>Test Result 🎉</h2>
+        {page === "Study Plan" && (
+          <section className="page-content">
+            <PageHeading title="Study Plan" subtitle="Build your daily study consistency" />
+            <div className="panel plan-panel">
+              <h2>Today's Checklist</h2>
+              {studyPlan.map(item => (
+                <label className={`plan-item ${item.done ? "plan-done" : ""}`} key={item.id}>
+                  <input
+                    type="checkbox"
+                    checked={item.done}
+                    onChange={() => setStudyPlan(prev => prev.map(x =>
+                      x.id === item.id ? {...x, done: !x.done} : x
+                    ))}
+                  />
+                  <span>{item.text}</span>
+                </label>
+              ))}
+              <div className="progress-track">
+                <div style={{width: `${studyPlan.length ? studyPlan.filter(x => x.done).length / studyPlan.length * 100 : 0}%`}} />
+              </div>
+              <p>{studyPlan.filter(x => x.done).length} / {studyPlan.length} tasks completed</p>
+            </div>
+          </section>
+        )}
 
-          <div className="stats">
-            <article><small>Total Score</small><strong>{testScore}/{questions.length}</strong></article>
-            <article><small>Attempted</small><strong>{attempted}</strong></article>
-            <article><small>Accuracy</small><strong>{accuracy}%</strong></article>
-          </div>
-
-          <p>Unattempted: {questions.length - attempted}</p>
-
-          <button className="primary" onClick={startTest}>
-            Retake Test
-          </button>
-
-          <button onClick={() => setPage("Dashboard")}>
-            Dashboard
-          </button>
-        </section>}
-
-        {/* REVISION */}
-        {page === "Revision" && <section className="panel">
-          <h2>Revision Queue</h2>
-          <p className="muted">Questions you get wrong can appear here later.</p>
-          <div className="empty">🔁<br />Your revision list will appear here.</div>
-        </section>}
-
-        {/* STUDY PLAN */}
-        {page === "Study Plan" && <section className="panel">
-          <h2>Today's Study Plan</h2>
-          <div className="planitem"><b>25 min</b><span>Study one Chhattisgarh GK topic</span></div>
-          <div className="planitem"><b>20 min</b><span>Practice questions</span></div>
-          <div className="planitem"><b>10 min</b><span>Review mistakes</span></div>
-        </section>}
-
-        {/* PRACTICE PROGRESS */}
-        {page === "Progress" && <section className="panel">
-          <h2>Your Practice Progress</h2>
-          <div className="stats">
-            <article><small>Attempted</small><strong>{Object.keys(done).length}</strong></article>
-            <article><small>Correct</small><strong>{score}</strong></article>
-            <article><small>Accuracy</small><strong>{Object.keys(done).length ? Math.round(score / Object.keys(done).length * 100) : 0}%</strong></article>
-          </div>
-          <button onClick={() => {setDone({}); setIdx(0); setChoice(null); setChecked(false);}}>
-            Reset Practice Progress
-          </button>
-        </section>}
-
-        <footer>CG Exam Saathi • Prototype • Verify official answers before publishing.</footer>
+        {page === "Progress" && (
+          <section className="page-content">
+            <PageHeading title="Your Progress" subtitle="Your learning journey at a glance" />
+            <div className="stats-grid">
+              <StatCard icon="📚" value={attempted} label="Attempted Questions" tone="blue" />
+              <StatCard icon="✓" value={correct} label="Correct Answers" tone="green" />
+              <StatCard icon="🎯" value={`${accuracy}%`} label="Accuracy" tone="purple" />
+              <StatCard icon="📝" value={testHistory.length} label="Mock Tests" tone="orange" />
+            </div>
+            <div className="panel">
+              <h2>Mock Test History</h2>
+              {testHistory.length === 0 ? <EmptyState text="अभी कोई mock test नहीं दिया गया।" /> :
+                testHistory.map(test => (
+                  <div className="revision-item" key={test.id}>
+                    <strong>{test.date}</strong>
+                    <p>{test.correct}/{test.total} correct • {test.accuracy}% accuracy</p>
+                  </div>
+                ))}
+              <button className="btn-secondary danger-button" onClick={resetProgress}>Reset Practice Progress</button>
+            </div>
+          </section>
+        )}
       </main>
     </div>
   );
+}
+
+function Dashboard({navigate, questions, attempted, correct, accuracy, testHistory}) {
+  const progressPercent = questions.length
+    ? Math.round(attempted / questions.length * 100)
+    : 0;
+
+  return (
+    <section className="page-content dashboard-content">
+      <div className="hero-grid">
+        <div className="hero-card">
+          <div className="hero-copy">
+            <span className="eyebrow">WELCOME TO YOUR STUDY SPACE</span>
+            <h1>CG Exam <span>Saathi</span></h1>
+            <p>Smart Preparation for CG Vyapam</p>
+            <button className="btn-primary" onClick={() => navigate("Practice")}>Start Practicing →</button>
+          </div>
+          <div className="hero-art">📚<span>🎓</span></div>
+          <div className="hero-orb orb-one" />
+          <div className="hero-orb orb-two" />
+        </div>
+        <div className="motivation-card">
+          <span>✦ DAILY MOTIVATION</span>
+          <div className="quote-mark">“</div>
+          <h2>You Can Do It!</h2>
+          <p>Consistent Study<br/>Brings Success.</p>
+          <div className="motivation-bottom">🔥 Keep Going!</div>
+        </div>
+      </div>
+
+      <div className="stats-grid">
+        <StatCard icon="📘" value={questions.length} label="Questions" tone="blue"/>
+        <StatCard icon="📝" value={testHistory.length} label="Mock Tests" tone="green"/>
+        <StatCard icon="📊" value={`${accuracy}%`} label="Your Accuracy" tone="purple"/>
+        <StatCard icon="🏆" value={accuracy >= 75 ? "Good" : "Growing"} label="Performance" tone="orange"/>
+      </div>
+
+      <h2 className="section-title">✨ Quick Access</h2>
+      <div className="quick-grid">
+        {[
+          ["Practice","🎯","Topic-wise Questions","blue"],
+          ["Mock Test","📝","Take Mock Test","purple"],
+          ["Revision","↻","Weak Topics","green"],
+          ["Study Plan","▦","Plan Your Study","orange"],
+          ["Progress","📈","Track Your Progress","indigo"]
+        ].map(([name,icon,desc,tone]) => (
+          <button className={`quick-card ${tone}`} key={name} onClick={() => navigate(name)}>
+            <span className="quick-icon">{icon}</span>
+            <strong>{name}</strong>
+            <small>{desc}</small>
+            <span className="quick-arrow">→</span>
+          </button>
+        ))}
+      </div>
+
+      <div className="bottom-grid">
+        <div className="panel progress-panel">
+          <div className="panel-heading"><h2>Your Progress</h2><button onClick={() => navigate("Progress")}>View Details →</button></div>
+          <div className="progress-content">
+            <div className="progress-ring" style={{"--progress": `${progressPercent}%`}}>
+              <strong>{progressPercent}%</strong>
+            </div>
+            <div className="progress-details">
+              <span>Overall Practice Progress</span>
+              <div className="progress-track"><div style={{width: `${progressPercent}%`}}/></div>
+              <p>✓ {correct} correct <span>•</span> ⏳ {attempted} attempted</p>
+            </div>
+          </div>
+        </div>
+
+        <div className="panel activity-panel">
+          <div className="panel-heading"><h2>Recent Activity</h2><button onClick={() => navigate("Progress")}>View All →</button></div>
+          {testHistory.length ? (
+            <div className="activity-row"><span>✓</span><div><strong>Mock Test Completed</strong><small>{testHistory[0].accuracy}% score</small></div></div>
+          ) : (
+            <div className="activity-row"><span>📖</span><div><strong>Welcome to CG Exam Saathi</strong><small>Start your first practice session</small></div></div>
+          )}
+          <div className="activity-row"><span>▶</span><div><strong>Practice Questions</strong><small>{attempted} questions attempted</small></div></div>
+        </div>
+      </div>
+    </section>
+  );
+}
+
+function PageHeading({title, subtitle}) {
+  return <div className="page-heading"><h1>{title}</h1><p>{subtitle}</p></div>;
+}
+
+function StatCard({icon,value,label,tone}) {
+  return <div className={`stat-card ${tone}`}><div className="stat-icon">{icon}</div><div><strong>{value}</strong><span>{label}</span></div></div>;
+}
+
+function EmptyState({text}) {
+  return <div className="empty-state"><span>🌱</span><p>{text}</p></div>;
 }
 
 createRoot(document.getElementById("root")).render(<App />);

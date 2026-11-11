@@ -10,26 +10,10 @@
       "language": "hi",
       "enabled": true,
       "subjects": [
-        {
-          "id": "computer",
-          "name": "Computer",
-          "enabled": true
-        },
-        {
-          "id": "general-knowledge",
-          "name": "General Knowledge",
-          "enabled": true
-        },
-        {
-          "id": "reasoning",
-          "name": "Reasoning",
-          "enabled": true
-        },
-        {
-          "id": "mathematics",
-          "name": "Mathematics",
-          "enabled": true
-        }
+        {"id": "computer", "name": "Computer", "enabled": true},
+        {"id": "general-knowledge", "name": "General Knowledge", "enabled": true},
+        {"id": "reasoning", "name": "Reasoning", "enabled": true},
+        {"id": "mathematics", "name": "Mathematics", "enabled": true}
       ]
     },
     {

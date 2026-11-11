@@ -1,40 +1,22 @@
 
-import questionsData from "../../data/questions.json";
+import data from "../../data/questions.json";
 
-const questions = Array.isArray(questionsData)
-  ? questionsData
-  : questionsData.questions || [];
+const questions = Array.isArray(data) ? data : data.questions || [];
 
 export const questionRepository = {
-  getAll() {
-    return questions;
-  },
+  getAll: () => questions,
 
-  getById(id) {
-    return questions.find(
-      (question) => String(question.id) === String(id)
-    );
-  },
+  getById: id =>
+    questions.find(q => String(q.id) === String(id)),
 
-  getByExam(examId) {
-    return questions.filter(
-      (question) => question.exam === examId
-    );
-  },
+  getByExam: examId =>
+    questions.filter(q => q.exam === examId),
 
-  getBySubject(subjectId) {
-    return questions.filter(
-      (question) => question.subject === subjectId
-    );
-  },
+  getBySubject: subjectId =>
+    questions.filter(q => q.subject === subjectId),
 
-  getByTopic(topicId) {
-    return questions.filter(
-      (question) => question.topic === topicId
-    );
-  },
+  getByTopic: topicId =>
+    questions.filter(q => q.topic === topicId),
 
-  getCount() {
-    return questions.length;
-  }
+  getCount: () => questions.length
 };
