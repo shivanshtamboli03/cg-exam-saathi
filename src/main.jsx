@@ -1,4 +1,3 @@
-
 import React, { useEffect, useMemo, useState } from "react";
 import { createRoot } from "react-dom/client";
 import "./style.css";
@@ -18,6 +17,13 @@ const ALL_QUESTIONS = questionService.getAll();
 
 const readStore = (key, fallback) =>
   localStorageService.get(key, fallback);
+
+const DEFAULT_PLAN = [
+  { id: 1, text: "Computer Knowledge", done: false },
+  { id: 2, text: "Chhattisgarh GK", done: false },
+  { id: 3, text: "Reasoning Practice", done: false },
+  { id: 4, text: "Mock Test", done: false }
+];
 
 function App() {
   // Navigation
@@ -48,12 +54,7 @@ function App() {
   );
 
   const [studyPlan, setStudyPlan] = useState(() =>
-    readStore("study-plan", [
-      { id: 1, text: "Computer Knowledge", done: false },
-      { id: 2, text: "Chhattisgarh GK", done: false },
-      { id: 3, text: "Reasoning Practice", done: false },
-      { id: 4, text: "Mock Test", done: false }
-    ])
+    readStore("study-plan", DEFAULT_PLAN)
   );
 
   // Mock Test
@@ -93,10 +94,12 @@ function App() {
       ? []
       : getTopics(subjectFilter);
 
+  const currentPracticeIndex = practiceQuestions.length
+    ? practiceIndex % practiceQuestions.length
+    : 0;
+
   const q = practiceQuestions.length
-    ? practiceQuestions[
-        practiceIndex % practiceQuestions.length
-      ]
+    ? practiceQuestions[currentPracticeIndex]
     : null;
 
   // Statistics
@@ -117,8 +120,10 @@ function App() {
     question => bookmarks.includes(String(question.id))
   );
 
-  // Question Engine QA - Development Console
-  if (import.meta.env.DEV) {
+  // Question Engine QA - Development Console (runs once)
+  useEffect(() => {
+    if (!import.meta.env.DEV) return;
+
     const report = questionService.getValidationReport();
     const quality = questionService.getQualitySummary();
 
@@ -133,7 +138,7 @@ function App() {
     }
 
     console.groupEnd();
-  }
+  }, []);
 
   // Save data
   useEffect(() => {
@@ -279,13 +284,7 @@ function App() {
     setProgress({});
     setBookmarks([]);
     setTestHistory([]);
-
-    setStudyPlan([
-      { id: 1, text: "Computer Knowledge", done: false },
-      { id: 2, text: "Chhattisgarh GK", done: false },
-      { id: 3, text: "Reasoning Practice", done: false },
-      { id: 4, text: "Mock Test", done: false }
-    ]);
+    setStudyPlan(DEFAULT_PLAN);
 
     localStorageService.remove("practice-progress");
     localStorageService.remove("bookmarks");
@@ -469,7 +468,7 @@ function App() {
                 <div className="question-meta">
                   <span>
                     Question {practiceQuestions.length
-                      ? practiceIndex + 1
+                      ? currentPracticeIndex + 1
                       : 0}
                   </span>
 
@@ -815,7 +814,8 @@ function App() {
                     <p>{question.explanation}</p>
 
                   </div>
-                ))}
+                ))
+              )}
 
             </div>
 
@@ -846,7 +846,8 @@ function App() {
                     </button>
 
                   </div>
-                ))}
+                ))
+              )}
 
             </div>
 
