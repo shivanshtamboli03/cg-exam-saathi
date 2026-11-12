@@ -6,13 +6,19 @@
     "answer": 2,
     "explanation": "TCP/IP इंटरनेट का मुख्य संचार प्रोटोकॉल है।"
   },
-  {
-    "id": 2,
-    "question": "निम्नलिखित में से कौन-सी वेबसाइट आपको स्थानीय दुकानों का विवरण देगी?",
-    "options": ["www.google.com", "www.justdial.com", "www.localshops.com", "www.yahoo.co.in"],
-    "answer": 2,
-    "explanation": "www.localshops.com स्थानीय दुकानों की जानकारी प्रदान करने वाली वेबसाइट है।"
-  },
+  
+{
+  "id": 2,
+  "question": "निम्नलिखित में से कौन-सी वेबसाइट आपको स्थानीय दुकानों का विवरण देगी?",
+  "options": [
+    "www.google.com",
+    "www.justdial.com",
+    "www.localshops.com",
+    "www.yahoo.co.in"
+  ],
+  "answer": 1,
+  "explanation": "Justdial स्थानीय दुकानों और व्यवसायों की जानकारी खोजने के लिए उपयोग की जाने वाली directory service है।"
+},
   {
     "id": 3,
     "question": "एक तकनीक जिसमें एक प्रोग्राम IP प्रसारण ऐड्रेसिंग ऑपरेशन का दुरुपयोग करके एक नेटवर्क पर हमला करता है, कहलाता है?",
