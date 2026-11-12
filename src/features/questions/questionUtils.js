@@ -6,12 +6,38 @@ const SUBJECT_MAP = {
   maths: "maths"
 };
 
-function getLegacyMetadata(id) {
-  const n = Number(id);
+function getLegacyMetadata(id) {function getLegacyMetadata(id) {
+  const textId = String(id ?? "").toUpperCase();
 
-  if (!Number.isInteger(n)) {
-    return { subject: "general", topic: "general" };
+  if (textId.startsWith("CGV-COMP-")) {
+    return {
+      subject: "computer",
+      topic: "computer-fundamentals"
+    };
   }
+
+  if (textId.startsWith("CGV-HIN-")) {
+    return {
+      subject: "hindi",
+      topic: "hindi-grammar"
+    };
+  }
+
+  if (textId.startsWith("CGV-ENG-")) {
+    return {
+      subject: "english",
+      topic: "english-grammar"
+    };
+  }
+
+  if (textId.startsWith("CGV-MATH-")) {
+    return {
+      subject: "maths",
+      topic: "mathematics"
+    };
+  }
+
+  const n = Number(id);
 
   // Computer questions: IDs 1–20
   if (n >= 1 && n <= 20) {
