@@ -1,3 +1,4 @@
+
 import React, { useEffect, useMemo, useState } from "react";
 import { createRoot } from "react-dom/client";
 import "./style.css";
@@ -17,13 +18,6 @@ const ALL_QUESTIONS = questionService.getAll();
 
 const readStore = (key, fallback) =>
   localStorageService.get(key, fallback);
-
-const DEFAULT_PLAN = [
-  { id: 1, text: "Computer Knowledge", done: false },
-  { id: 2, text: "Chhattisgarh GK", done: false },
-  { id: 3, text: "Reasoning Practice", done: false },
-  { id: 4, text: "Mock Test", done: false }
-];
 
 function App() {
   // Navigation
@@ -54,7 +48,12 @@ function App() {
   );
 
   const [studyPlan, setStudyPlan] = useState(() =>
-    readStore("study-plan", DEFAULT_PLAN)
+    readStore("study-plan", [
+      { id: 1, text: "Computer Knowledge", done: false },
+      { id: 2, text: "Chhattisgarh GK", done: false },
+      { id: 3, text: "Reasoning Practice", done: false },
+      { id: 4, text: "Mock Test", done: false }
+    ])
   );
 
   // Mock Test
@@ -94,12 +93,10 @@ function App() {
       ? []
       : getTopics(subjectFilter);
 
-  const currentPracticeIndex = practiceQuestions.length
-    ? practiceIndex % practiceQuestions.length
-    : 0;
-
   const q = practiceQuestions.length
-    ? practiceQuestions[currentPracticeIndex]
+    ? practiceQuestions[
+        practiceIndex % practiceQuestions.length
+      ]
     : null;
 
   // Statistics
@@ -120,10 +117,8 @@ function App() {
     question => bookmarks.includes(String(question.id))
   );
 
-  // Question Engine QA - Development Console (runs once)
-  useEffect(() => {
-    if (!import.meta.env.DEV) return;
-
+  // Question Engine QA
+  if (import.meta.env.DEV) {
     const report = questionService.getValidationReport();
     const quality = questionService.getQualitySummary();
 
@@ -138,7 +133,7 @@ function App() {
     }
 
     console.groupEnd();
-  }, []);
+  }
 
   // Save data
   useEffect(() => {
@@ -168,7 +163,7 @@ function App() {
     return () => clearInterval(timer);
   }, [testStarted, testSubmitted]);
 
-  // Auto submit when timer finishes
+  // Auto submit
   useEffect(() => {
     if (testStarted && testTime === 0 && !testSubmitted) {
       submitTest();
@@ -284,7 +279,13 @@ function App() {
     setProgress({});
     setBookmarks([]);
     setTestHistory([]);
-    setStudyPlan(DEFAULT_PLAN);
+
+    setStudyPlan([
+      { id: 1, text: "Computer Knowledge", done: false },
+      { id: 2, text: "Chhattisgarh GK", done: false },
+      { id: 3, text: "Reasoning Practice", done: false },
+      { id: 4, text: "Mock Test", done: false }
+    ]);
 
     localStorageService.remove("practice-progress");
     localStorageService.remove("bookmarks");
@@ -308,7 +309,6 @@ function App() {
 
       {/* SIDEBAR */}
       <aside className={`sidebar ${mobileMenu ? "sidebar-open" : ""}`}>
-
         <div className="brand">
           <div className="brand-icon">📚</div>
           <h2>CG Exam<br />Saathi</h2>
@@ -333,7 +333,6 @@ function App() {
           <strong>Dream Big...</strong>
           <p>Crack CG Vyapam!</p>
         </div>
-
       </aside>
 
       {/* MAIN */}
@@ -341,7 +340,6 @@ function App() {
 
         {/* TOPBAR */}
         <header className="topbar">
-
           <button
             className="mobile-toggle"
             onClick={() => setMobileMenu(!mobileMenu)}
@@ -351,12 +349,9 @@ function App() {
 
           <div className="exam-pill">🎓 CG Vyapam</div>
           <div className="top-tag">✨ Your Success Partner</div>
-
           <div className="top-spacer" />
-
           <span className="top-icon">🔔</span>
           <div className="avatar">S</div>
-
         </header>
 
         {/* DASHBOARD */}
@@ -374,7 +369,6 @@ function App() {
         {/* PRACTICE */}
         {page === "Practice" && (
           <section className="page-content">
-
             <PageHeading
               title="Practice Zone"
               subtitle="Learn • Practice • Improve"
@@ -382,7 +376,6 @@ function App() {
 
             {/* FILTERS */}
             <div className="practice-filters">
-
               <select
                 value={subjectFilter}
                 onChange={e => {
@@ -394,7 +387,6 @@ function App() {
                 }}
               >
                 <option value="all">All Subjects</option>
-
                 {availableSubjects.map(subject => (
                   <option key={subject} value={subject}>
                     {subject}
@@ -412,7 +404,6 @@ function App() {
                 }}
               >
                 <option value="all">All Topics</option>
-
                 {availableTopics.map(topic => (
                   <option key={topic} value={topic}>
                     {topic}
@@ -447,9 +438,7 @@ function App() {
                 }}
               />
 
-              <span>
-                {practiceQuestions.length} Questions Available
-              </span>
+              <span>{practiceQuestions.length} Questions Available</span>
 
               <button
                 className="btn-secondary"
@@ -457,24 +446,19 @@ function App() {
               >
                 Reset Filters
               </button>
-
             </div>
 
             <div className="practice-layout">
 
               {/* QUESTION */}
               <div className="panel question-panel">
-
                 <div className="question-meta">
                   <span>
                     Question {practiceQuestions.length
-                      ? currentPracticeIndex + 1
+                      ? practiceIndex + 1
                       : 0}
                   </span>
-
-                  <span>
-                    {q?.subject || "General"} • CG Vyapam
-                  </span>
+                  <span>{q?.subject || "General"} • CG Vyapam</span>
                 </div>
 
                 <h2>
@@ -494,9 +478,7 @@ function App() {
                           ? "option-correct"
                           : ""
                       } ${
-                        checked &&
-                        selected === i &&
-                        i !== q.answer
+                        checked && selected === i && i !== q.answer
                           ? "option-wrong"
                           : ""
                       }`}
@@ -516,7 +498,6 @@ function App() {
                     {selected === q.answer
                       ? "✓ सही उत्तर!"
                       : "✕ गलत उत्तर"}
-
                     <p>
                       {q.explanation ||
                         "इस प्रश्न की explanation उपलब्ध नहीं है।"}
@@ -526,7 +507,6 @@ function App() {
 
                 {/* ACTIONS */}
                 <div className="question-actions">
-
                   <button
                     className="btn-secondary"
                     onClick={() => q && toggleBookmark(q.id)}
@@ -554,21 +534,15 @@ function App() {
                       Check Answer
                     </button>
                   ) : (
-                    <button
-                      className="btn-primary"
-                      onClick={nextPractice}
-                    >
+                    <button className="btn-primary" onClick={nextPractice}>
                       Next Question →
                     </button>
                   )}
-
                 </div>
-
               </div>
 
               {/* SUMMARY */}
               <div className="panel side-info">
-
                 <h3>📈 Practice Summary</h3>
 
                 <div className="mini-stat">
@@ -599,18 +573,14 @@ function App() {
                   <span>Wrong Questions</span>
                   <strong>{wrongQuestions.length}</strong>
                 </div>
-
               </div>
-
             </div>
-
           </section>
         )}
 
         {/* MOCK TEST */}
         {page === "Mock Test" && (
           <section className="page-content">
-
             <PageHeading
               title="Mock Test"
               subtitle="Test your preparation under exam conditions"
@@ -618,14 +588,11 @@ function App() {
 
             {!testStarted && !testSubmitted && (
               <div className="panel test-start">
-
                 <div className="big-icon">📝</div>
                 <h2>CG Vyapam Practice Test</h2>
-
                 <p>
                   {questions.length} questions • 60 minutes • Score analysis
                 </p>
-
                 <button
                   className="btn-primary"
                   onClick={startTest}
@@ -633,25 +600,20 @@ function App() {
                 >
                   Start Mock Test →
                 </button>
-
               </div>
             )}
 
             {/* TEST QUESTIONS */}
             {testStarted && !testSubmitted && (
               <div className="panel question-panel">
-
                 <div className="question-meta">
-
                   <span>
                     Question {testIndex + 1}/{questions.length}
                   </span>
-
                   <span className="timer">
                     ⏱ {Math.floor(testTime / 60)}:
                     {String(testTime % 60).padStart(2, "0")}
                   </span>
-
                 </div>
 
                 {/* QUESTION PALETTE */}
@@ -660,9 +622,7 @@ function App() {
                     <button
                       key={question.id}
                       className={`palette-item ${
-                        testAnswers[index] !== undefined
-                          ? "answered"
-                          : ""
+                        testAnswers[index] !== undefined ? "answered" : ""
                       } ${
                         testIndex === index ? "current" : ""
                       }`}
@@ -697,7 +657,6 @@ function App() {
                 </div>
 
                 <div className="question-actions">
-
                   <button
                     className="btn-secondary"
                     onClick={() => setTestIndex(i => Math.max(0, i - 1))}
@@ -714,30 +673,21 @@ function App() {
                       Next →
                     </button>
                   ) : (
-                    <button
-                      className="btn-primary"
-                      onClick={submitTest}
-                    >
+                    <button className="btn-primary" onClick={submitTest}>
                       Submit Test
                     </button>
                   )}
-
                 </div>
 
-                <button
-                  className="text-button"
-                  onClick={submitTest}
-                >
+                <button className="text-button" onClick={submitTest}>
                   Finish test now
                 </button>
-
               </div>
             )}
 
             {/* TEST RESULT */}
             {testSubmitted && currentResult && (
               <div className="panel test-start">
-
                 <div className="big-icon">🏆</div>
                 <h2>Test Completed!</h2>
 
@@ -750,45 +700,35 @@ function App() {
                 </p>
 
                 <div className="result-breakdown">
-
                   <div>
                     <strong>{currentResult.correct}</strong>
                     <span>Correct</span>
                   </div>
-
                   <div>
                     <strong>{currentResult.wrong}</strong>
                     <span>Wrong</span>
                   </div>
-
                   <div>
                     <strong>{currentResult.skipped}</strong>
                     <span>Skipped</span>
                   </div>
-
                 </div>
 
                 <p>
                   Attempted: {currentResult.attempted}/{currentResult.total}
                 </p>
 
-                <button
-                  className="btn-primary"
-                  onClick={startTest}
-                >
+                <button className="btn-primary" onClick={startTest}>
                   Retake Test
                 </button>
-
               </div>
             )}
-
           </section>
         )}
 
         {/* REVISION */}
         {page === "Revision" && (
           <section className="page-content">
-
             <PageHeading
               title="Revision Room"
               subtitle="Revise your weak areas and mistakes"
@@ -796,7 +736,6 @@ function App() {
 
             {/* WRONG QUESTIONS */}
             <div className="panel">
-
               <h2>📌 Questions to Revise</h2>
 
               {wrongQuestions.length === 0 ? (
@@ -804,24 +743,18 @@ function App() {
               ) : (
                 wrongQuestions.map(question => (
                   <div className="revision-item" key={question.id}>
-
                     <p>{question.question}</p>
-
                     <small>
                       Correct Answer: {question.options[question.answer]}
                     </small>
-
                     <p>{question.explanation}</p>
-
                   </div>
                 ))
               )}
-
             </div>
 
             {/* BOOKMARKED QUESTIONS */}
             <div className="panel revision-bookmarks">
-
               <h2>⭐ Bookmarked Questions</h2>
 
               {bookmarkedQuestions.length === 0 ? (
@@ -829,13 +762,10 @@ function App() {
               ) : (
                 bookmarkedQuestions.map(question => (
                   <div className="revision-item" key={question.id}>
-
                     <p>{question.question}</p>
-
                     <small>
                       Correct Answer: {question.options[question.answer]}
                     </small>
-
                     <p>{question.explanation}</p>
 
                     <button
@@ -844,37 +774,29 @@ function App() {
                     >
                       Remove Bookmark
                     </button>
-
                   </div>
                 ))
               )}
-
             </div>
-
           </section>
         )}
 
         {/* STUDY PLAN */}
         {page === "Study Plan" && (
           <section className="page-content">
-
             <PageHeading
               title="Study Plan"
               subtitle="Build your daily study consistency"
             />
 
             <div className="panel plan-panel">
-
               <h2>Today's Checklist</h2>
 
               {studyPlan.map(item => (
                 <label
-                  className={`plan-item ${
-                    item.done ? "plan-done" : ""
-                  }`}
+                  className={`plan-item ${item.done ? "plan-done" : ""}`}
                   key={item.id}
                 >
-
                   <input
                     type="checkbox"
                     checked={item.done}
@@ -886,76 +808,67 @@ function App() {
                       )
                     )}
                   />
-
                   <span>{item.text}</span>
-
                 </label>
               ))}
 
               <div className="progress-track">
-                <div style={{
-                  width: `${
-                    studyPlan.length
-                      ? studyPlan.filter(x => x.done).length /
-                        studyPlan.length * 100
-                      : 0
-                  }%`
-                }} />
+                <div
+                  style={{
+                    width: `${
+                      studyPlan.length
+                        ? studyPlan.filter(x => x.done).length /
+                          studyPlan.length * 100
+                        : 0
+                    }%`
+                  }}
+                />
               </div>
 
               <p>
                 {studyPlan.filter(x => x.done).length} / {studyPlan.length} tasks completed
               </p>
-
             </div>
-
           </section>
         )}
 
         {/* PROGRESS */}
         {page === "Progress" && (
           <section className="page-content">
-
             <PageHeading
               title="Your Progress"
               subtitle="Your learning journey at a glance"
             />
 
             <div className="stats-grid">
-
               <StatCard
                 icon="📚"
                 value={attempted}
                 label="Attempted Questions"
                 tone="blue"
               />
-
               <StatCard
                 icon="✓"
                 value={correct}
                 label="Correct Answers"
                 tone="green"
               />
-
               <StatCard
                 icon="🎯"
                 value={`${accuracy}%`}
                 label="Accuracy"
                 tone="purple"
               />
-
               <StatCard
                 icon="📝"
                 value={testHistory.length}
                 label="Mock Tests"
                 tone="orange"
               />
-
             </div>
 
             {/* TEST HISTORY */}
             <div className="panel">
-
               <h2>Mock Test History</h2>
 
               {testHistory.length === 0 ? (
@@ -963,17 +876,13 @@ function App() {
               ) : (
                 testHistory.map(test => (
                   <div className="revision-item" key={test.id}>
-
                     <strong>{test.date}</strong>
-
                     <p>
                       {test.correct}/{test.total} correct • {test.accuracy}% accuracy
                     </p>
-
                     <p>
                       Attempted: {test.attempted} • Wrong: {test.wrong ?? 0} • Skipped: {test.skipped ?? 0}
                     </p>
-
                   </div>
                 ))
               )}
@@ -991,19 +900,13 @@ function App() {
               >
                 Reset All Data
               </button>
-
             </div>
-
           </section>
         )}
 
         {/* QUESTION BANK */}
-        {page === "Question Bank" && (
-          <QuestionBankDashboard />
-        )}
-
+        {page === "Question Bank" && <QuestionBankDashboard />}
       </main>
-
     </div>
   );
 }
@@ -1023,19 +926,14 @@ function Dashboard({
 
   return (
     <section className="page-content dashboard-content">
-
       <div className="hero-grid">
-
         <div className="hero-card">
-
           <div className="hero-copy">
-
             <span className="eyebrow">
               WELCOME TO YOUR STUDY SPACE
             </span>
 
             <h1>CG Exam <span>Saathi</span></h1>
-
             <p>Smart Preparation for CG Vyapam</p>
 
             <button
@@ -1044,7 +942,6 @@ function Dashboard({
             >
               Start Practicing →
             </button>
-
           </div>
 
           <div className="hero-art">
@@ -1053,65 +950,51 @@ function Dashboard({
 
           <div className="hero-orb orb-one" />
           <div className="hero-orb orb-two" />
-
         </div>
 
         <div className="motivation-card">
-
           <span>✦ DAILY MOTIVATION</span>
-
           <div className="quote-mark">“</div>
-
           <h2>You Can Do It!</h2>
-
           <p>Consistent Study<br />Brings Success.</p>
-
           <div className="motivation-bottom">
             🔥 Keep Going!
           </div>
-
         </div>
-
       </div>
 
       {/* STATS */}
       <div className="stats-grid">
-
         <StatCard
           icon="📘"
           value={questions.length}
           label="Questions"
           tone="blue"
         />
-
         <StatCard
           icon="📝"
           value={testHistory.length}
           label="Mock Tests"
           tone="green"
         />
-
         <StatCard
           icon="📊"
           value={`${accuracy}%`}
           label="Your Accuracy"
           tone="purple"
         />
-
         <StatCard
           icon="🏆"
           value={accuracy >= 75 ? "Good" : "Growing"}
           label="Performance"
           tone="orange"
         />
-
       </div>
 
       {/* QUICK ACCESS */}
       <h2 className="section-title">✨ Quick Access</h2>
 
       <div className="quick-grid">
-
         {[
           ["Practice", "🎯", "Topic-wise Questions", "blue"],
           ["Mock Test", "📝", "Take Mock Test", "purple"],
@@ -1125,34 +1008,25 @@ function Dashboard({
             key={name}
             onClick={() => navigate(name)}
           >
-
             <span className="quick-icon">{icon}</span>
             <strong>{name}</strong>
             <small>{desc}</small>
             <span className="quick-arrow">→</span>
-
           </button>
         ))}
-
       </div>
 
       {/* BOTTOM GRID */}
       <div className="bottom-grid">
-
         <div className="panel progress-panel">
-
           <div className="panel-heading">
-
             <h2>Your Progress</h2>
-
             <button onClick={() => navigate("Progress")}>
               View Details →
             </button>
-
           </div>
 
           <div className="progress-content">
-
             <div
               className="progress-ring"
               style={{ "--progress": `${progressPercent}%` }}
@@ -1161,7 +1035,6 @@ function Dashboard({
             </div>
 
             <div className="progress-details">
-
               <span>Overall Practice Progress</span>
 
               <div className="progress-track">
@@ -1171,65 +1044,46 @@ function Dashboard({
               <p>
                 ✓ {correct} correct <span>•</span> ⏳ {attempted} attempted
               </p>
-
             </div>
-
           </div>
-
         </div>
 
         {/* ACTIVITY */}
         <div className="panel activity-panel">
-
           <div className="panel-heading">
-
             <h2>Recent Activity</h2>
-
             <button onClick={() => navigate("Progress")}>
               View All →
             </button>
-
           </div>
 
           {testHistory.length ? (
             <div className="activity-row">
-
               <span>✓</span>
-
               <div>
                 <strong>Mock Test Completed</strong>
                 <small>{testHistory[0].accuracy}% score</small>
               </div>
-
             </div>
           ) : (
             <div className="activity-row">
-
               <span>📖</span>
-
               <div>
                 <strong>Welcome to CG Exam Saathi</strong>
                 <small>Start your first practice session</small>
               </div>
-
             </div>
           )}
 
           <div className="activity-row">
-
             <span>▶</span>
-
             <div>
               <strong>Practice Questions</strong>
               <small>{attempted} questions attempted</small>
             </div>
-
           </div>
-
         </div>
-
       </div>
-
     </section>
   );
 }
@@ -1248,14 +1102,11 @@ function PageHeading({ title, subtitle }) {
 function StatCard({ icon, value, label, tone }) {
   return (
     <div className={`stat-card ${tone}`}>
-
       <div className="stat-icon">{icon}</div>
-
       <div>
         <strong>{value}</strong>
         <span>{label}</span>
       </div>
-
     </div>
   );
 }

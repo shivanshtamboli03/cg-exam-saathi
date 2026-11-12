@@ -6,9 +6,11 @@ const SUBJECT_MAP = {
   maths: "maths"
 };
 
-function getLegacyMetadata(id) {function getLegacyMetadata(id) {
+// Legacy and new question ID metadata
+function getLegacyMetadata(id) {
   const textId = String(id ?? "").toUpperCase();
 
+  // New CG Vyapam question IDs
   if (textId.startsWith("CGV-COMP-")) {
     return {
       subject: "computer",
@@ -120,23 +122,42 @@ function getLegacyMetadata(id) {function getLegacyMetadata(id) {
     };
   }
 
-  return { subject: "general", topic: "general" };
+  return {
+    subject: "general",
+    topic: "general"
+  };
 }
 
+// Normalize question data
 export function normalizeQuestion(question) {
-  if (!question || typeof question !== "object") return null;
+  if (!question || typeof question !== "object") {
+    return null;
+  }
 
   const legacy = getLegacyMetadata(question.id);
+
+  // Replace missing or generic metadata with mapped metadata
+  const subject =
+    !question.subject || question.subject === "general"
+      ? legacy.subject
+      : question.subject;
+
+  const topic =
+    !question.topic || question.topic === "general"
+      ? legacy.topic
+      : question.topic;
 
   return {
     ...question,
     id: String(question.id ?? "").trim(),
     exam: question.exam || "cg-vyapam",
-    subject: question.subject || legacy.subject,
-    topic: question.topic || legacy.topic,
+    subject,
+    topic,
     difficulty: question.difficulty || "medium",
     language: question.language || "hi",
-    options: Array.isArray(question.options) ? question.options : [],
+    options: Array.isArray(question.options)
+      ? question.options
+      : [],
     explanation: question.explanation || "",
     source: question.source || "",
     year: question.year ?? null,
@@ -144,21 +165,25 @@ export function normalizeQuestion(question) {
   };
 }
 
+// Basic question validation
 export function isValidQuestion(q) {
   return Boolean(
     q &&
-    String(q.id ?? "").trim() &&
-    typeof q.question === "string" &&
-    q.question.trim() &&
-    Array.isArray(q.options) &&
-    q.options.length >= 2 &&
-    q.options.every(o => typeof o === "string" && o.trim()) &&
-    Number.isInteger(q.answer) &&
-    q.answer >= 0 &&
-    q.answer < q.options.length
+      String(q.id ?? "").trim() &&
+      typeof q.question === "string" &&
+      q.question.trim() &&
+      Array.isArray(q.options) &&
+      q.options.length >= 2 &&
+      q.options.every(
+        o => typeof o === "string" && o.trim()
+      ) &&
+      Number.isInteger(q.answer) &&
+      q.answer >= 0 &&
+      q.answer < q.options.length
   );
 }
 
+// Detailed question validation
 export function validateQuestion(q) {
   const errors = [];
   const warnings = [];
@@ -171,13 +196,23 @@ export function validateQuestion(q) {
     };
   }
 
-  if (!String(q.id ?? "").trim()) errors.push("Missing ID");
-  if (!q.question?.trim()) errors.push("Missing question text");
+  if (!String(q.id ?? "").trim()) {
+    errors.push("Missing ID");
+  }
+
+  if (
+    typeof q.question !== "string" ||
+    !q.question.trim()
+  ) {
+    errors.push("Missing question text");
+  }
 
   if (!Array.isArray(q.options) || q.options.length < 2) {
     errors.push("At least 2 options required");
   } else if (
-    q.options.some(o => typeof o !== "string" || !o.trim())
+    q.options.some(
+      o => typeof o !== "string" || !o.trim()
+    )
   ) {
     errors.push("Empty or invalid option");
   }
@@ -191,17 +226,48 @@ export function validateQuestion(q) {
     errors.push("Invalid answer index");
   }
 
-  if (!q.exam?.trim()) errors.push("Missing exam");
-  if (!q.subject?.trim()) errors.push("Missing subject");
-  if (!q.topic?.trim()) errors.push("Missing topic");
+  if (
+    typeof q.exam !== "string" ||
+    !q.exam.trim()
+  ) {
+    errors.push("Missing exam");
+  }
+
+  if (
+    typeof q.subject !== "string" ||
+    !q.subject.trim()
+  ) {
+    errors.push("Missing subject");
+  }
+
+  if (
+    typeof q.topic !== "string" ||
+    !q.topic.trim()
+  ) {
+    errors.push("Missing topic");
+  }
 
   if (!["easy", "medium", "hard"].includes(q.difficulty)) {
     warnings.push("Invalid or missing difficulty");
   }
 
-  if (!q.explanation?.trim()) warnings.push("Missing explanation");
-  if (!q.source?.trim()) warnings.push("Missing source");
-  if (q.verified !== true) warnings.push("Not verified");
+  if (
+    typeof q.explanation !== "string" ||
+    !q.explanation.trim()
+  ) {
+    warnings.push("Missing explanation");
+  }
+
+  if (
+    typeof q.source !== "string" ||
+    !q.source.trim()
+  ) {
+    warnings.push("Missing source");
+  }
+
+  if (q.verified !== true) {
+    warnings.push("Not verified");
+  }
 
   return {
     valid: errors.length === 0,
@@ -210,6 +276,7 @@ export function validateQuestion(q) {
   };
 }
 
+// Validate complete question bank
 export function validateQuestionBank(list) {
   const questions = Array.isArray(list) ? list : [];
   const seen = new Set();
@@ -226,7 +293,9 @@ export function validateQuestionBank(list) {
       result.valid = false;
     }
 
-    if (id) seen.add(id);
+    if (id) {
+      seen.add(id);
+    }
 
     return {
       index: index + 1,
@@ -244,6 +313,11 @@ export function validateQuestionBank(list) {
   };
 }
 
+// Answer checking
 export function checkAnswer(q, selectedAnswer) {
+  if (!q || !Number.isInteger(q.answer)) {
+    return false;
+  }
+
   return Number(selectedAnswer) === Number(q.answer);
 }
